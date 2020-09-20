@@ -30,7 +30,7 @@ np.set_printoptions(precision=3, threshold=1500, suppress=True)
 
 
 class NeuralNetwork_2Layer():
-    def __init__(self, inputSize, outputSize, neuronsPerLayer, learningRate = 0.01, useReLU=False):
+    def __init__(self, inputSize, outputSize, neuronsPerLayer, learningRate = 0.01, useReLU=True):
         self.inputSize = inputSize
         self.outputSize = outputSize
         self.neuronsPerLayer = neuronsPerLayer
@@ -58,9 +58,7 @@ class NeuralNetwork_2Layer():
 
     # ReLU activation derivative
     def __reluDerivative(self, x):
-        x[x<=0] = 0
-        x[x>0] = 1
-        return x
+        return np.where(x <= 0, 0, 1)
 
     def __lossDerivative(self, x, y):
         return x - y
@@ -71,7 +69,7 @@ class NeuralNetwork_2Layer():
             yield (i, l[i : i + n])
 
     # Training with backpropagation.
-    def train(self, xVals, yVals, epochs = 100000, minibatches = True, mbs = 100):
+    def train(self, xVals, yVals, epochs = 100000, minibatches = True, mbs = 64):
         #TODO: Implement backprop. allow minibatches. mbs should specify the size of each minibatch.
         
         for j in range(epochs):
