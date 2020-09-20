@@ -30,13 +30,15 @@ np.set_printoptions(precision=3, threshold=1500, suppress=True)
 
 
 class NeuralNetwork_2Layer():
-    def __init__(self, inputSize, outputSize, neuronsPerLayer, learningRate = 0.01):
+    def __init__(self, inputSize, outputSize, neuronsPerLayer, learningRate = 0.01, useReLU=False):
         self.inputSize = inputSize
         self.outputSize = outputSize
         self.neuronsPerLayer = neuronsPerLayer
         self.lr = learningRate
         self.W1 = np.random.randn(self.inputSize, self.neuronsPerLayer)
         self.W2 = np.random.randn(self.neuronsPerLayer, self.outputSize)
+        self.activ = self.__sigmoid if not useReLU else self.__relu
+        self.activDerivative = self.__sigmoidDerivative if not useReLU else self.__reluDerivative
 
     # Activation function.
     def __sigmoid(self, x):
@@ -49,6 +51,16 @@ class NeuralNetwork_2Layer():
     # Activation prime function. Assumes sigmoid(x), not x, as input
     def __sigmoidDerivative(self, x):
         return x * (1 - x)
+
+    # ReLU activation
+    def __relu(self, x):
+        return np.maximum(x, 0)
+
+    # ReLU activation derivative
+    def __reluDerivative(self, x):
+        x[x<=0] = 0
+        x[x>0] = 1
+        return x
 
     def __lossDerivative(self, x, y):
         return x - y
@@ -64,21 +76,18 @@ class NeuralNetwork_2Layer():
         
         for j in range(epochs):
             for index, inp in self.__batchGenerator(xVals, mbs):
-            # for i in range(30):
-                # index, inp = self.__batchGenerator(xVals, mbs)
-                # index = ret[0]
-                # inp = ret[1]
                 print(f"EPOCH {j} | Minibatch {index}")
                 yTrunc = yVals[index : index + mbs]
                 
-                
+                # Forward pass
                 l1Out, l2Out = self.__forward(inp)
+
                 # Backprop
                 l2e = self.__lossDerivative(l2Out, yTrunc)
-                l2d = l2e * self.__sigmoidDerivative(l2Out)
+                l2d = l2e * self.activDerivative(l2Out)
                 l2a = np.dot(l1Out.T, l2d) * self.lr
                 l1e = np.dot(l2d, self.W2.T)
-                l1d = l1e * self.__sigmoidDerivative(l1Out)
+                l1d = l1e * self.activDerivative(l1Out)
                 l1a = np.dot(inp.T, l1d) * self.lr
                 
                 # print('W2 content: ', self.W2)
@@ -110,8 +119,8 @@ class NeuralNetwork_2Layer():
 
     # Forward pass.
     def __forward(self, input):
-        layer1 = self.__sigmoid(np.dot(input, self.W1))
-        layer2 = self.__sigmoid(np.dot(layer1, self.W2))
+        layer1 = self.activ(np.dot(input, self.W1))
+        layer2 = self.activ(np.dot(layer1, self.W2))
         return layer1, layer2
 
     # Predict.
