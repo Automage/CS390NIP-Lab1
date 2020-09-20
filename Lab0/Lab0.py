@@ -63,13 +63,12 @@ class NeuralNetwork_2Layer():
         #TODO: Implement backprop. allow minibatches. mbs should specify the size of each minibatch.
         
         for j in range(epochs):
-            print("####### EPOCH ", j + 1)
             for index, inp in self.__batchGenerator(xVals, mbs):
             # for i in range(30):
                 # index, inp = self.__batchGenerator(xVals, mbs)
                 # index = ret[0]
                 # inp = ret[1]
-                print("Minibatch ", index)
+                print("EPOCH f{j} | Minibatch f{index}")
                 yTrunc = yVals[index : index + mbs]
                 
                 
