@@ -68,7 +68,7 @@ class NeuralNetwork_2Layer():
                 # index, inp = self.__batchGenerator(xVals, mbs)
                 # index = ret[0]
                 # inp = ret[1]
-                print("EPOCH f{j} | Minibatch f{index}")
+                print(f"EPOCH {j} | Minibatch {index}")
                 yTrunc = yVals[index : index + mbs]
                 
                 
