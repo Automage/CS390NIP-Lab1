@@ -186,7 +186,7 @@ def trainModel(data):
     elif ALGORITHM == "custom_net":
         print("Building and training Custom_NN.")
         model = NeuralNetwork_2Layer(IMAGE_SIZE, NUM_CLASSES, LAYER1_N)
-        model.train(xTrain, yTrain, 1)
+        model.train(xTrain, yTrain, 0)
         return model
     elif ALGORITHM == "tf_net":
         print("Building and training TF_NN.")
@@ -234,25 +234,33 @@ def runModel(data, model):
 
 
 def evalResults(data, preds):   #TODO: Add F1 score confusion matrix here.
+    print(preds)
     xTest, yTest = data
     acc = 0
-    conf = np.zeros((10,10))
-    print(preds)
+    conf = np.zeros((NUM_CLASSES + 1,NUM_CLASSES + 1)) # + 1 for total column/row
+    # predIndex = np.argmax(preds)
+    # ansIndex = np.argmax(yTest)
+
     for i in range(preds.shape[0]):
         if np.array_equal(preds[i], yTest[i]):   acc = acc + 1
-        pred = np.argmax(preds[i])
-        ans = np.argmax(yTest[i])
-        conf[pred][ans] += 1
-        
+        predIndex = np.argmax(preds[i])
+        ansIndex = np.argmax(yTest[i])
+        conf[predIndex][ansIndex] += 1
+
+    conf[NUM_CLASSES] = conf.sum(axis=0)
+    conf[:, NUM_CLASSES] = conf.sum(axis=1)
+
+    fscores = np.zeros(NUM_CLASSES)
+    for i in range(NUM_CLASSES):
+        precision = conf[i][i] / conf[i][NUM_CLASSES]
+        recall = conf[i][i] / conf[NUM_CLASSES][i]
+        fscores[i] = 2 * ((precision * recall) / (precision + recall))
+    
     accuracy = acc / preds.shape[0]
     print("Classifier algorithm: %s" % ALGORITHM)
     print("Classifier accuracy: %f%%" % (accuracy * 100))
-
-    # Generate confusion matrix
-    
-    for i in range(preds.shape[0]):
-        
-
+    print("F - scores")
+    print(fscores)
     print('Confusion Matrix:')
     print(conf)
 
