@@ -23,8 +23,8 @@ IMAGE_SIZE = 784
 
 # Use these to set the algorithm to use.
 # ALGORITHM = "guesser"
-ALGORITHM = "custom_net"
-#ALGORITHM = "tf_net"
+# ALGORITHM = "custom_net"
+ALGORITHM = "tf_net"
 
 np.set_printoptions(precision=3, threshold=1500, suppress=True)
 
@@ -189,8 +189,18 @@ def trainModel(data):
         return model
     elif ALGORITHM == "tf_net":
         print("Building and training TF_NN.")
-        print("Not yet implemented.")                   #TODO: Write code to build and train your keras neural net.
-        return None
+        model = keras.Sequential()
+        lossType = keras.losses.categorical_crossentropy
+        opt = tf.optimizers.Adam()
+        inShape = (IMAGE_SIZE,)
+        # First layer
+        #model.add([tf.keras.flatten(), keras.layers.Dense(512, input_shape=inShape, activation=tf.nn.sigmoid), keras.layers.Dense(10, input_shape=(512,), activation=tf.nn.sigmoid)])
+        # Second layer
+        model.add(keras.layers.Dense(512, input_shape=inShape, activation=tf.nn.sigmoid))
+        model.add(keras.layers.Dense(10, input_shape=(512,), activation=tf.nn.sigmoid))
+        model.compile(loss=lossType, optimizer=opt)
+        model.fit(xTrain, yTrain, epochs=6)
+        return model
     else:
         raise ValueError("Algorithm not recognized.")
 
@@ -204,8 +214,7 @@ def runModel(data, model):
         return model.predict(data)
     elif ALGORITHM == "tf_net":
         print("Testing TF_NN.")
-        print("Not yet implemented.")                   #TODO: Write code to run your keras neural net.
-        return None
+        return model.predict(data)
     else:
         raise ValueError("Algorithm not recognized.")
 
