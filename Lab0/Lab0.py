@@ -20,17 +20,18 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 # Information on dataset.
 NUM_CLASSES = 10
 IMAGE_SIZE = 784
+LAYER1_N = 512
 
 # Use these to set the algorithm to use.
 # ALGORITHM = "guesser"
-# ALGORITHM = "custom_net"
-ALGORITHM = "tf_net"
+ALGORITHM = "custom_net"
+# ALGORITHM = "tf_net"
 
 np.set_printoptions(precision=3, threshold=1500, suppress=True)
 
 
 class NeuralNetwork_2Layer():
-    def __init__(self, inputSize, outputSize, neuronsPerLayer, learningRate = 0.01, useReLU=True):
+    def __init__(self, inputSize, outputSize, neuronsPerLayer, learningRate = 0.01, useReLU=False):
         self.inputSize = inputSize
         self.outputSize = outputSize
         self.neuronsPerLayer = neuronsPerLayer
@@ -184,7 +185,7 @@ def trainModel(data):
         return None   # Guesser has no model, as it is just guessing.
     elif ALGORITHM == "custom_net":
         print("Building and training Custom_NN.")
-        model = NeuralNetwork_2Layer(IMAGE_SIZE, NUM_CLASSES, 512)
+        model = NeuralNetwork_2Layer(IMAGE_SIZE, NUM_CLASSES, LAYER1_N)
         model.train(xTrain, yTrain, 10)
         return model
     elif ALGORITHM == "tf_net":
@@ -195,9 +196,9 @@ def trainModel(data):
         opt = tf.optimizers.Adam()
         
         # First layer
-        model.add(keras.layers.Dense(512, input_shape=(IMAGE_SIZE,), activation=tf.nn.sigmoid))
+        model.add(keras.layers.Dense(LAYER1_N, input_shape=(IMAGE_SIZE,), activation=tf.nn.sigmoid))
         # Second layer
-        model.add(keras.layers.Dense(NUM_CLASSES, input_shape=(512,), activation=tf.nn.sigmoid))
+        model.add(keras.layers.Dense(NUM_CLASSES, input_shape=(LAYER1_N,), activation=tf.nn.sigmoid))
         model.compile(loss=lossType, optimizer=opt)
 
         # Train model
