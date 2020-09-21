@@ -158,7 +158,7 @@ def trainModel(data):
     elif ALGORITHM == "custom_net":
         print("Building and training Custom_NN.")
         model = NeuralNetwork_2Layer(IMAGE_SIZE, NUM_CLASSES, LAYER1_N)
-        model.train(xTrain, yTrain, 0)
+        model.train(xTrain, yTrain, 10)
         return model
     elif ALGORITHM == "tf_net":
         print("Building and training TF_NN.")
