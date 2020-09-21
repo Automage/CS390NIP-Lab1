@@ -71,11 +71,10 @@ class NeuralNetwork_2Layer():
 
     # Training with backpropagation.
     def train(self, xVals, yVals, epochs = 100000, minibatches = True, mbs = 64):
-        #TODO: Implement backprop. allow minibatches. mbs should specify the size of each minibatch.
-        
         for j in range(epochs):
+            print('EPOCH ', j)
             for index, inp in self.__batchGenerator(xVals, mbs):
-                print(f"EPOCH {j} | Minibatch {index}")
+                # print(f"EPOCH {j} | Minibatch {index}")
                 yTrunc = yVals[index : index + mbs]
                 
                 # Forward pass
@@ -88,33 +87,10 @@ class NeuralNetwork_2Layer():
                 l1e = np.dot(l2d, self.W2.T)
                 l1d = l1e * self.activDerivative(l1Out)
                 l1a = np.dot(inp.T, l1d) * self.lr
-                
-                # print('W2 content: ', self.W2)
-                # print("l2out: ", l2Out.shape)
-                # print(l2Out)
-                # sig = self.__sigmoidDerivative(l2Out)
-                # print("l2sig: ", sig.shape)
-                # print(sig)
-                # print('l2e: ', l2e.shape)
-                # print(l2e)
-                # print('l2d: ', l2d.shape)
-                # print(l2d)
-                # print('l2a: ', l2a.shape)
-                # print(l2a)
-                # print("l1out: ", l1Out.shape)
-                # print(l1Out)
-                # print('l1e: ', l1e.shape)
-                # print(l1e)
-                # print('l1d: ', l1d.shape)
-                # print(l1d)
-                # print('l1a: ', l1a.shape)
-                # print(l1a)
 
-                # print('W2 old: ', self.W2[0:4])
                 # Adjustments
                 self.W2 -= l2a
                 self.W1 -= l1a
-                # print('W2 new: ', self.W2[0:4])
 
     # Forward pass.
     def __forward(self, input):
@@ -124,12 +100,8 @@ class NeuralNetwork_2Layer():
 
     # Predict.
     def predict(self, xVals):
-        print('W2 ', self.W2[0:4])
-        print('W1 ', self.W1[0:4])
         _, layer2 = self.__forward(xVals)
-        print(layer2[0:4])
         maxIndicies = np.argmax(layer2, axis=1)
-        print(maxIndicies)
 
         oneHot = np.zeros(layer2.shape)
         for i in range(maxIndicies.size):
