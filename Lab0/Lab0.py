@@ -31,7 +31,7 @@ np.set_printoptions(precision=3, threshold=1500, suppress=True)
 
 
 class NeuralNetwork_2Layer():
-    def __init__(self, inputSize, outputSize, neuronsPerLayer, learningRate = 0.01, useReLU=False):
+    def __init__(self, inputSize, outputSize, neuronsPerLayer, learningRate = 0.1, useReLU=False):
         self.inputSize = inputSize
         self.outputSize = outputSize
         self.neuronsPerLayer = neuronsPerLayer
@@ -186,7 +186,7 @@ def trainModel(data):
     elif ALGORITHM == "custom_net":
         print("Building and training Custom_NN.")
         model = NeuralNetwork_2Layer(IMAGE_SIZE, NUM_CLASSES, LAYER1_N)
-        model.train(xTrain, yTrain, 10)
+        model.train(xTrain, yTrain, 1)
         return model
     elif ALGORITHM == "tf_net":
         print("Building and training TF_NN.")
@@ -236,12 +236,26 @@ def runModel(data, model):
 def evalResults(data, preds):   #TODO: Add F1 score confusion matrix here.
     xTest, yTest = data
     acc = 0
+    conf = np.zeros((10,10))
     print(preds)
     for i in range(preds.shape[0]):
         if np.array_equal(preds[i], yTest[i]):   acc = acc + 1
+        pred = np.argmax(preds[i])
+        ans = np.argmax(yTest[i])
+        conf[pred][ans] += 1
+        
     accuracy = acc / preds.shape[0]
     print("Classifier algorithm: %s" % ALGORITHM)
     print("Classifier accuracy: %f%%" % (accuracy * 100))
+
+    # Generate confusion matrix
+    
+    for i in range(preds.shape[0]):
+        
+
+    print('Confusion Matrix:')
+    print(conf)
+
 
 
 
