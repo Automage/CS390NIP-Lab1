@@ -191,15 +191,17 @@ def trainModel(data):
         print("Building and training TF_NN.")
         model = keras.Sequential()
         lossType = keras.losses.categorical_crossentropy
+        # Version of backprop
         opt = tf.optimizers.Adam()
-        inShape = (IMAGE_SIZE,)
+        
         # First layer
-        #model.add([tf.keras.flatten(), keras.layers.Dense(512, input_shape=inShape, activation=tf.nn.sigmoid), keras.layers.Dense(10, input_shape=(512,), activation=tf.nn.sigmoid)])
+        model.add(keras.layers.Dense(512, input_shape=(IMAGE_SIZE,), activation=tf.nn.sigmoid))
         # Second layer
-        model.add(keras.layers.Dense(512, input_shape=inShape, activation=tf.nn.sigmoid))
-        model.add(keras.layers.Dense(10, input_shape=(512,), activation=tf.nn.sigmoid))
+        model.add(keras.layers.Dense(NUM_CLASSES, input_shape=(512,), activation=tf.nn.sigmoid))
         model.compile(loss=lossType, optimizer=opt)
-        model.fit(xTrain, yTrain, epochs=6)
+
+        # Train model
+        model.fit(xTrain, yTrain, epochs=5)
         return model
     else:
         raise ValueError("Algorithm not recognized.")
@@ -214,7 +216,17 @@ def runModel(data, model):
         return model.predict(data)
     elif ALGORITHM == "tf_net":
         print("Testing TF_NN.")
-        return model.predict(data)
+        # Run model
+        preds = model.predict(data)
+
+        # One hot encoding
+        maxIndicies = np.argmax(preds, axis=1)
+        oneHot = np.zeros(preds.shape)
+        for i in range(maxIndicies.size):
+            index = maxIndicies[i]
+            oneHot[i][index] = 1
+
+        return oneHot
     else:
         raise ValueError("Algorithm not recognized.")
 
@@ -223,6 +235,7 @@ def runModel(data, model):
 def evalResults(data, preds):   #TODO: Add F1 score confusion matrix here.
     xTest, yTest = data
     acc = 0
+    print(preds)
     for i in range(preds.shape[0]):
         if np.array_equal(preds[i], yTest[i]):   acc = acc + 1
     accuracy = acc / preds.shape[0]
