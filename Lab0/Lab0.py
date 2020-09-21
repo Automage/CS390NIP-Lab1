@@ -234,12 +234,9 @@ def runModel(data, model):
 
 
 def evalResults(data, preds):   #TODO: Add F1 score confusion matrix here.
-    print(preds)
     xTest, yTest = data
     acc = 0
     conf = np.zeros((NUM_CLASSES + 1,NUM_CLASSES + 1)) # + 1 for total column/row
-    # predIndex = np.argmax(preds)
-    # ansIndex = np.argmax(yTest)
 
     for i in range(preds.shape[0]):
         if np.array_equal(preds[i], yTest[i]):   acc = acc + 1
@@ -259,8 +256,7 @@ def evalResults(data, preds):   #TODO: Add F1 score confusion matrix here.
     accuracy = acc / preds.shape[0]
     print("Classifier algorithm: %s" % ALGORITHM)
     print("Classifier accuracy: %f%%" % (accuracy * 100))
-    print("F - scores")
-    print(fscores)
+    print("F - scores: ", fscores)
     print('Confusion Matrix:')
     print(conf)
 
